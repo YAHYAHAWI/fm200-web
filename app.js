@@ -1,61 +1,99 @@
-const WEBHOOK_URL =
-  "https://primary-production-2236a.up.railway.app/webhook/fm200-calc";
+const WEBHOOK="https://primary-production-2236a.up.railway.app/webhook/fm200-calc"
 
-const roomLength = document.getElementById("roomLength");
-const roomWidth = document.getElementById("roomWidth");
-const roomHeight = document.getElementById("roomHeight");
-const volumeValue = document.getElementById("volumeValue");
-const runBtn = document.getElementById("runBtn");
-const resultBox = document.getElementById("resultBox");
+function volume(){
 
-function getNumber(value) {
-  return Number(value || 0);
+let l=Number(roomLength.value)
+let w=Number(roomWidth.value)
+let h=Number(roomHeight.value)
+
+let v=l*w*h
+
+document.getElementById("volume").innerText=v
+
+return v
 }
 
-function updateVolume() {
-  const volume =
-    getNumber(roomLength.value) *
-    getNumber(roomWidth.value) *
-    getNumber(roomHeight.value);
+roomLength.oninput=volume
+roomWidth.oninput=volume
+roomHeight.oninput=volume
 
-  volumeValue.textContent = volume.toFixed(2);
+
+async function runCalculation(){
+
+let payload={
+
+project:{
+
+name:projectName.value,
+client:clientName.value,
+engineer:engineerName.value,
+email:email.value,
+notes:notes.value
+
+},
+
+room:{
+
+name:roomName.value,
+
+length:Number(roomLength.value),
+width:Number(roomWidth.value),
+height:Number(roomHeight.value),
+
+volume:volume()
+
+},
+
+design:{
+
+agent:agentType.value,
+hazard:hazardType.value,
+concentration:Number(designConc.value),
+tempMin:Number(tempMin.value),
+tempMax:Number(tempMax.value),
+altitude:Number(altitude.value),
+discharge:Number(discharge.value)
+
+},
+
+hardware:{
+
+pressure:Number(pressure.value),
+nozzles:Number(nozzles.value),
+pipe:pipe.value
+
 }
 
-roomLength.addEventListener("input", updateVolume);
-roomWidth.addEventListener("input", updateVolume);
-roomHeight.addEventListener("input", updateVolume);
+}
 
-runBtn.addEventListener("click", async () => {
-  const payload = {
-    project: {
-      name: document.getElementById("projectName").value,
-      client: document.getElementById("clientName").value,
-      engineer: document.getElementById("engineerName").value,
-      email: document.getElementById("email").value,
-    },
-    room: {
-      length: getNumber(roomLength.value),
-      width: getNumber(roomWidth.value),
-      height: getNumber(roomHeight.value),
-      volume: getNumber(volumeValue.textContent),
-    },
-    agent: document.getElementById("agentType").value,
-  };
 
-  resultBox.textContent = "Submitting...";
+document.getElementById("result").innerText="Sending..."
 
-  try {
-    const res = await fetch(WEBHOOK_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+try{
 
-    const text = await res.text();
-    resultBox.textContent = text || "Success, but empty response.";
-  } catch (error) {
-    resultBox.textContent = "Error: " + error.message;
-  }
-});
+let res=await fetch(WEBHOOK,{
+
+method:"POST",
+headers:{
+
+"Content-Type":"application/json"
+
+},
+
+body:JSON.stringify(payload)
+
+})
+
+let text=await res.text()
+
+document.getElementById("result").innerText=text
+
+}
+
+catch(e){
+
+document.getElementById("result").innerText="Error : "+e.message
+
+}
+
+}
