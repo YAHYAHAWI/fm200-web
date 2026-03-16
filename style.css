@@ -1,326 +1,204 @@
-const API_URL = "/api/fm200-calc";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NFPA 2001 YH Clean Agent Design Platform</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="page-header">
+      <h1>NFPA 2001 YH Clean Agent Design Platform</h1>
+      <p class="subtitle">Clean Agent Fire Suppression Design Interface</p>
+    </header>
 
-const companyName = document.getElementById("companyName");
-const projectName = document.getElementById("projectName");
-const engineerName = document.getElementById("engineerName");
-const authority = document.getElementById("authority");
-const email = document.getElementById("email");
-const notes = document.getElementById("notes");
+    <div class="grid">
+      <section class="card">
+        <h2>Project Information</h2>
 
-const agentType = document.getElementById("agentType");
-const displayName = document.getElementById("displayName");
-const chemicalName = document.getElementById("chemicalName");
-const occupancy = document.getElementById("occupancy");
-const designConc = document.getElementById("designConc");
-const discharge = document.getElementById("discharge");
-const holdTime = document.getElementById("holdTime");
-const safetyFactor = document.getElementById("safetyFactor");
+        <label for="companyName">Company Name</label>
+        <input id="companyName" type="text" placeholder="Company Name" value="FireSys" />
 
-const roomName = document.getElementById("roomName");
-const roomLength = document.getElementById("roomLength");
-const roomWidth = document.getElementById("roomWidth");
-const roomHeight = document.getElementById("roomHeight");
-const nonPermeableVolume = document.getElementById("nonPermeableVolume");
+        <label for="projectName">Project Name</label>
+        <input id="projectName" type="text" placeholder="Project Name" value="Server Room Protection" />
 
-const tempMin = document.getElementById("tempMin");
-const tempMax = document.getElementById("tempMax");
-const altitude = document.getElementById("altitude");
-const hazardType = document.getElementById("hazardType");
+        <label for="engineerName">Engineer Name</label>
+        <input id="engineerName" type="text" placeholder="Engineer Name" value="Yahya Hawi" />
 
-const pressureClass = document.getElementById("pressureClass");
-const cylinderCapacity = document.getElementById("cylinderCapacity");
-const nozzles = document.getElementById("nozzles");
-const pipe = document.getElementById("pipe");
-const mainPipe = document.getElementById("mainPipe");
-const branchPipe = document.getElementById("branchPipe");
-const fittingsCount = document.getElementById("fittingsCount");
-const reserveRequired = document.getElementById("reserveRequired");
+        <label for="authority">Authority</label>
+        <input id="authority" type="text" placeholder="Authority" value="Civil Defense" />
 
-const volumeEl = document.getElementById("volume");
-const agentMass = document.getElementById("agentMass");
-const cylinderQty = document.getElementById("cylinderQty");
-const eqPipeLength = document.getElementById("eqPipeLength");
-const nozzlePressure = document.getElementById("nozzlePressure");
-const calcDischargeTime = document.getElementById("calcDischargeTime");
-const hydraulicStatus = document.getElementById("hydraulicStatus");
+        <label for="email">Engineer Email</label>
+        <input id="email" type="email" placeholder="Engineer Email" value="firesys2030@gmail.com" />
 
-const complianceResult = document.getElementById("complianceResult");
-const engineeringWarning = document.getElementById("engineeringWarning");
-const resultBox = document.getElementById("result");
+        <label for="notes">Engineering Notes</label>
+        <textarea id="notes" placeholder="Optional notes"></textarea>
+      </section>
 
-const runButton = document.getElementById("runButton");
-const resetButton = document.getElementById("resetButton");
+      <section class="card">
+        <h2>Agent Selection</h2>
 
-function setAgentDefaults() {
-  if (agentType.value === "fm200") {
-    displayName.value = "HFC-227ea";
-    chemicalName.value = "HFC-227ea";
-    designConc.value = "7.9";
-    discharge.value = "10";
-  } else {
-    displayName.value = "FK-5-1-12";
-    chemicalName.value = "FK-5-1-12";
-    designConc.value = "5.3";
-    discharge.value = "10";
-  }
-}
+        <label for="agentType">Agent Family</label>
+        <select id="agentType">
+          <option value="fm200">FM-200</option>
+          <option value="fk5112">FK-5-1-12</option>
+        </select>
 
-function num(value, fallback = 0) {
-  const n = Number(value);
-  return Number.isFinite(n) ? n : fallback;
-}
+        <label for="displayName">Display Name</label>
+        <input id="displayName" type="text" readonly />
 
-function calculateVolume() {
-  const l = num(roomLength.value);
-  const w = num(roomWidth.value);
-  const h = num(roomHeight.value);
-  const v = l * w * h;
-  volumeEl.textContent = v.toFixed(2);
-  return v;
-}
+        <label for="chemicalName">Chemical Name</label>
+        <input id="chemicalName" type="text" readonly />
 
-function getAgentFactor() {
-  return agentType.value === "fm200" ? 1.15 : 1.0;
-}
+        <label for="systemType">System Type</label>
+        <input id="systemType" type="text" value="Clean Agent Total Flooding System" readonly />
 
-function calculateOutputs() {
-  const volume = calculateVolume();
-  const concentration = num(designConc.value);
-  const nozzleCount = num(nozzles.value);
-  const fittings = num(fittingsCount.value);
-  const pressure = num(pressureClass.value);
-  const mainPipeDia = num(mainPipe.value);
-  const branchPipeDia = num(branchPipe.value);
-  const siteAltitude = num(altitude.value);
+        <label for="occupancy">Occupancy</label>
+        <select id="occupancy">
+          <option value="Normally Occupied">Normally Occupied</option>
+          <option value="Normally Unoccupied">Normally Unoccupied</option>
+        </select>
+      </section>
 
-  const agentFactor = getAgentFactor();
+      <section class="card">
+        <h2>Room Data</h2>
 
-  const estimatedMass = volume > 0 ? volume * (concentration / 100) * 1.2 * agentFactor : 0;
-  const selectedCylinderCapacity = num(cylinderCapacity.value, 45);
-  const estimatedCylinderQty = estimatedMass > 0 && selectedCylinderCapacity > 0
-    ? Math.ceil(estimatedMass / selectedCylinderCapacity)
-    : 0;
+        <label for="roomName">Protected Room Name</label>
+        <input id="roomName" type="text" placeholder="Room Name" value="Server Room A" />
 
-  const estimatedEqLength =
-    (mainPipeDia * 0.25) +
-    (branchPipeDia * 0.18) +
-    (fittings * 1.5);
+        <label for="roomLength">Room Length (m)</label>
+        <input id="roomLength" type="number" step="0.01" placeholder="Length in meters" value="8" />
 
-  const estimatedNozzlePressure =
-    pressure - (estimatedEqLength * 0.15) - (siteAltitude * 0.00012);
+        <label for="roomWidth">Room Width (m)</label>
+        <input id="roomWidth" type="number" step="0.01" placeholder="Width in meters" value="6" />
 
-  const estimatedDischarge = num(discharge.value, 10);
+        <label for="roomHeight">Room Height (m)</label>
+        <input id="roomHeight" type="number" step="0.01" placeholder="Height in meters" value="3.2" />
 
-  let status = "PASS";
-  let warning = "None";
+        <label for="nonPermeableVolume">Non-Permeable Volume (m³)</label>
+        <input id="nonPermeableVolume" type="number" step="0.01" value="2" />
 
-  if (volume <= 0) {
-    status = "PENDING INPUT";
-    warning = "Enter valid room dimensions.";
-  } else if (estimatedNozzlePressure < 8) {
-    status = "REVIEW REQUIRED";
-    warning = "Estimated nozzle pressure is low. Check pipe network and cylinder selection.";
-  }
+        <div class="info-box">
+          <strong>Calculated Gross Volume:</strong>
+          <span id="volume">0.00</span> m³
+        </div>
+      </section>
 
-  agentMass.value = estimatedMass > 0 ? estimatedMass.toFixed(2) : "";
-  cylinderQty.value = estimatedCylinderQty ? String(estimatedCylinderQty) : "";
-  eqPipeLength.value = estimatedEqLength > 0 ? estimatedEqLength.toFixed(2) : "";
-  nozzlePressure.value = estimatedNozzlePressure > 0 ? estimatedNozzlePressure.toFixed(2) : "";
-  calcDischargeTime.value = estimatedDischarge.toFixed(1);
-  hydraulicStatus.value = status;
+      <section class="card">
+        <h2>NFPA 2001 Design Basis</h2>
 
-  complianceResult.textContent = status;
-  engineeringWarning.textContent = warning;
-}
+        <label for="hazardType">Hazard Type</label>
+        <select id="hazardType">
+          <option value="Electrical / Electronic Equipment">Electrical / Electronic Equipment</option>
+          <option value="Class A Surface Fire">Class A Surface Fire</option>
+          <option value="Archive / Data / Telecom Room">Archive / Data / Telecom Room</option>
+          <option value="Flammable Liquid Hazard">Flammable Liquid Hazard</option>
+        </select>
 
-function resetForm() {
-  companyName.value = "FireSys";
-  projectName.value = "Server Room Protection";
-  engineerName.value = "Yahya Hawi";
-  authority.value = "Civil Defense";
-  email.value = "firesys2030@gmail.com";
-  notes.value = "";
+        <label for="designConc">Design Concentration (%)</label>
+        <input id="designConc" type="number" readonly />
 
-  agentType.value = "fm200";
-  occupancy.value = "Normally Occupied";
+        <label for="tempMin">Minimum Ambient Temperature (°C)</label>
+        <input id="tempMin" type="number" step="0.1" value="18" />
 
-  roomName.value = "Server Room A";
-  roomLength.value = "8";
-  roomWidth.value = "6";
-  roomHeight.value = "3.2";
-  nonPermeableVolume.value = "2";
+        <label for="tempMax">Maximum Ambient Temperature (°C)</label>
+        <input id="tempMax" type="number" step="0.1" value="27" />
 
-  hazardType.value = "Electrical / Electronic Equipment";
-  tempMin.value = "18";
-  tempMax.value = "27";
-  altitude.value = "10";
-  holdTime.value = "10";
-  discharge.value = "10";
-  safetyFactor.value = "20";
+        <label for="altitude">Site Altitude Above Sea Level (m)</label>
+        <input id="altitude" type="number" step="0.1" value="10" />
 
-  pressureClass.value = "42";
-  cylinderCapacity.value = "45";
-  nozzles.value = "3";
-  pipe.value = "Schedule 40";
-  mainPipe.value = "25";
-  branchPipe.value = "20";
-  fittingsCount.value = "4";
-  reserveRequired.value = "true";
+        <label for="holdTime">Required Hold Time (min)</label>
+        <input id="holdTime" type="number" step="0.1" value="10" />
 
-  resultBox.textContent = "No response yet";
+        <label for="discharge">Required Discharge Time (sec)</label>
+        <input id="discharge" type="number" step="0.1" value="10" />
 
-  setAgentDefaults();
-  calculateOutputs();
-}
+        <label for="safetyFactor">Safety Factor (%)</label>
+        <input id="safetyFactor" type="number" step="0.1" value="20" />
+      </section>
 
-function buildPayload() {
-  return {
-    platform_name: "NFPA 2001 YH Clean Agent Design Platform",
-    standard: "NFPA 2001",
-    edition: "2022 Edition",
-    project: {
-      company_name: companyName.value.trim(),
-      project_name: projectName.value.trim(),
-      engineer: engineerName.value.trim(),
-      authority: authority.value.trim(),
-      email: email.value.trim(),
-      notes: notes.value.trim(),
-      room_name: roomName.value.trim()
-    },
-    system: {
-      system_type: "Clean Agent Total Flooding System",
-      agent_family: agentType.value
-    },
-    hazard: {
-      type: hazardType.value,
-      occupancy: occupancy.value
-    },
-    room: {
-      width_m: num(roomWidth.value),
-      length_m: num(roomLength.value),
-      height_m: num(roomHeight.value),
-      non_permeable_volume_m3: num(nonPermeableVolume.value)
-    },
-    design_basis: {
-      altitude_m: num(altitude.value),
-      min_temp_c: num(tempMin.value),
-      max_temp_c: num(tempMax.value),
-      hold_time_min: num(holdTime.value, 10),
-      discharge_time_sec: num(discharge.value, 10),
-      safety_factor_pct: num(safetyFactor.value, 20)
-    },
-    hardware_inputs: {
-      cylinder_pressure_class_bar: num(pressureClass.value),
-      cylinder_capacity_kg: num(cylinderCapacity.value, 45),
-      pipe_schedule: pipe.value,
-      main_pipe_diameter_mm: num(mainPipe.value),
-      branch_pipe_diameter_mm: num(branchPipe.value),
-      fittings_count: num(fittingsCount.value),
-      nozzle_count: num(nozzles.value),
-      reserve_required: reserveRequired.value === "true"
-    }
-  };
-}
+      <section class="card">
+        <h2>System Hardware Inputs</h2>
 
-function validatePayload(payload) {
-  const missing = [];
+        <label for="pressureClass">Cylinder Pressure Class (bar)</label>
+        <select id="pressureClass">
+          <option value="25">25 bar</option>
+          <option value="42" selected>42 bar</option>
+        </select>
 
-  if (!payload.project.company_name) missing.push("Company Name");
-  if (!payload.project.project_name) missing.push("Project Name");
-  if (!payload.project.engineer) missing.push("Engineer Name");
-  if (!payload.project.authority) missing.push("Authority");
-  if (!payload.project.email) missing.push("Email");
-  if (!payload.project.room_name) missing.push("Room Name");
+        <label for="cylinderCapacity">Cylinder Capacity (kg)</label>
+        <input id="cylinderCapacity" type="number" step="0.1" value="45" />
 
-  if (payload.room.length_m <= 0) missing.push("Room Length");
-  if (payload.room.width_m <= 0) missing.push("Room Width");
-  if (payload.room.height_m <= 0) missing.push("Room Height");
+        <label for="nozzles">Nozzle Count</label>
+        <input id="nozzles" type="number" step="1" value="3" />
 
-  if (missing.length) {
-    throw new Error("Please complete: " + missing.join(", "));
-  }
-}
+        <label for="pipe">Pipe Schedule</label>
+        <select id="pipe">
+          <option value="Schedule 40" selected>Schedule 40</option>
+          <option value="Schedule 80">Schedule 80</option>
+          <option value="Stainless Steel">Stainless Steel</option>
+        </select>
 
-async function runCalculation() {
-  calculateOutputs();
+        <label for="mainPipe">Main Pipe Diameter (mm)</label>
+        <input id="mainPipe" type="number" step="0.1" value="25" />
 
-  const payload = buildPayload();
+        <label for="branchPipe">Branch Pipe Diameter (mm)</label>
+        <input id="branchPipe" type="number" step="0.1" value="20" />
 
-  try {
-    validatePayload(payload);
-  } catch (err) {
-    resultBox.textContent = err.message;
-    return;
-  }
+        <label for="fittingsCount">Fittings Count</label>
+        <input id="fittingsCount" type="number" step="1" value="4" />
 
-  runButton.disabled = true;
-  runButton.textContent = "Running...";
-  resultBox.textContent = "Sending request to system...";
+        <label for="reserveRequired">Reserve Required</label>
+        <select id="reserveRequired">
+          <option value="true" selected>Yes</option>
+          <option value="false">No</option>
+        </select>
+      </section>
 
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    });
+      <section class="card">
+        <h2>Hydraulic Preview</h2>
 
-    const contentType = res.headers.get("content-type") || "";
-    const data = contentType.includes("application/json")
-      ? await res.json()
-      : await res.text();
+        <label>Estimated Agent Mass (kg)</label>
+        <input id="agentMass" type="text" readonly />
 
-    resultBox.textContent =
-      typeof data === "string" ? data : JSON.stringify(data, null, 2);
+        <label>Estimated Cylinder Quantity</label>
+        <input id="cylinderQty" type="text" readonly />
 
-    if (!res.ok) {
-      console.error("Request failed:", data);
-    }
-  } catch (e) {
-    console.error(e);
-    resultBox.textContent =
-      "Failed to fetch.\n\nMost likely reasons:\n" +
-      "1) Vercel API file is missing.\n" +
-      "2) GitHub changes not deployed yet.\n" +
-      "3) Railway webhook is unpublished.\n" +
-      "4) Proxy file is not forwarding correctly.\n\n" +
-      "Technical message: " + e.message;
-  } finally {
-    runButton.disabled = false;
-    runButton.textContent = "Run Calculation";
-  }
-}
+        <label>Estimated Equivalent Pipe Length (m)</label>
+        <input id="eqPipeLength" type="text" readonly />
 
-agentType.addEventListener("change", () => {
-  setAgentDefaults();
-  calculateOutputs();
-});
+        <label>Estimated Nozzle Pressure (bar)</label>
+        <input id="nozzlePressure" type="text" readonly />
 
-[
-  roomLength,
-  roomWidth,
-  roomHeight,
-  nonPermeableVolume,
-  tempMin,
-  tempMax,
-  altitude,
-  pressureClass,
-  cylinderCapacity,
-  nozzles,
-  pipe,
-  mainPipe,
-  branchPipe,
-  fittingsCount,
-  discharge,
-  safetyFactor
-].forEach((el) => {
-  el.addEventListener("input", calculateOutputs);
-  el.addEventListener("change", calculateOutputs);
-});
+        <label>Estimated Discharge Time (sec)</label>
+        <input id="calcDischargeTime" type="text" readonly />
 
-runButton.addEventListener("click", runCalculation);
-resetButton.addEventListener("click", resetForm);
+        <label>Hydraulic Status</label>
+        <input id="hydraulicStatus" type="text" readonly />
+      </section>
 
-setAgentDefaults();
-calculateOutputs();
+      <section class="card full">
+        <h2>Compliance / Engineering Output</h2>
+        <div class="info-box stacked">
+          <div><strong>Standard:</strong> NFPA 2001</div>
+          <div><strong>Compliance Check:</strong> <span id="complianceResult">Pending</span></div>
+          <div><strong>Engineering Warning:</strong> <span id="engineeringWarning">None</span></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="actions">
+      <button class="runButton" id="runButton" type="button">Run Calculation</button>
+      <button class="secondaryButton" id="resetButton" type="button">Reset Form</button>
+    </div>
+
+    <section class="resultCard">
+      <h2>Webhook Response</h2>
+      <pre id="result">No response yet</pre>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
