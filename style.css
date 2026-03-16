@@ -1,85 +1,170 @@
-body{
-background:#081326;
-color:white;
-font-family:Arial;
-margin:0;
+body {
+  background: #081326;
+  color: white;
+  font-family: Arial, sans-serif;
+  margin: 0;
 }
 
-.container{
-width:1100px;
-margin:auto;
-padding:40px;
+.container {
+  width: 1100px;
+  margin: auto;
+  padding: 40px;
+  box-sizing: border-box;
 }
 
-.subtitle{
-color:#9fb3d1;
-margin-bottom:30px;
+.page-header {
+  margin-bottom: 30px;
 }
 
-.grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:25px;
+.page-header h1 {
+  margin-bottom: 10px;
+  font-size: 42px;
 }
 
-.card{
-background:#0f1c34;
-padding:25px;
-border-radius:12px;
-border:1px solid #1f355d;
+.subtitle {
+  color: #9fb3d1;
+  margin: 0;
+  font-size: 18px;
 }
 
-.card.full{
-grid-column:1 / span 2;
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
 }
 
-input,select,textarea{
-
-width:100%;
-padding:12px;
-margin-top:10px;
-background:#061022;
-border:1px solid #2c4a7c;
-border-radius:8px;
-color:white;
-
+.card {
+  background: #0f1c34;
+  padding: 25px;
+  border-radius: 16px;
+  border: 1px solid #1f355d;
+  box-sizing: border-box;
 }
 
-textarea{
-height:100px;
+.card h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 24px;
 }
 
-.volumeBox{
-margin-top:15px;
-background:#061022;
-padding:10px;
-border-radius:6px;
+.card.full {
+  grid-column: 1 / span 2;
 }
 
-.runButton{
-
-margin-top:30px;
-padding:14px 30px;
-background:#19c37d;
-border:none;
-border-radius:8px;
-font-size:16px;
-cursor:pointer;
-
+label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  color: #c7d6f1;
+  font-size: 14px;
+  font-weight: 600;
 }
 
-.resultCard{
-
-margin-top:40px;
-background:#0f1c34;
-padding:25px;
-border-radius:12px;
-
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 14px;
+  background: #061022;
+  border: 1px solid #2c4a7c;
+  border-radius: 10px;
+  color: white;
+  box-sizing: border-box;
+  font-size: 15px;
 }
 
-pre{
-background:#061022;
-padding:15px;
-border-radius:8px;
-overflow:auto;
+input[readonly] {
+  background: #0b1730;
+  color: #cfe0ff;
+}
+
+textarea {
+  height: 110px;
+  resize: vertical;
+}
+
+.info-box {
+  margin-top: 18px;
+  background: #061022;
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid #1e3c68;
+}
+
+.info-box.stacked div {
+  margin-bottom: 8px;
+}
+
+.info-box.stacked div:last-child {
+  margin-bottom: 0;
+}
+
+.actions {
+  margin-top: 30px;
+  display: flex;
+  gap: 15px;
+}
+
+.runButton {
+  padding: 14px 30px;
+  background: #19c37d;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  color: white;
+  font-weight: 700;
+}
+
+.runButton:hover {
+  background: #14a96c;
+}
+
+.secondaryButton {
+  padding: 14px 30px;
+  background: transparent;
+  border: 1px solid #2c4a7c;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  color: white;
+  font-weight: 700;
+}
+
+.resultCard {
+  margin-top: 35px;
+  background: #0f1c34;
+  padding: 25px;
+  border-radius: 16px;
+  border: 1px solid #1f355d;
+}
+
+pre {
+  background: #061022;
+  padding: 16px;
+  border-radius: 10px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 160px;
+}
+
+@media (max-width: 1200px) {
+  .container {
+    width: 95%;
+  }
+}
+
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card.full {
+    grid-column: auto;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
 }
