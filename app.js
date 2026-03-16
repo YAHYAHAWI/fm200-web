@@ -1,175 +1,327 @@
-body {
-  background: #081326;
-  color: white;
-  font-family: Arial, sans-serif;
-  margin: 0;
-}
+const API_URL = "/api/fm200-calc";
 
-.container {
-  width: 1100px;
-  margin: auto;
-  padding: 40px;
-  box-sizing: border-box;
-}
+const companyName = document.getElementById("companyName");
+const projectName = document.getElementById("projectName");
+const engineerName = document.getElementById("engineerName");
+const authority = document.getElementById("authority");
+const email = document.getElementById("email");
+const notes = document.getElementById("notes");
 
-.page-header {
-  margin-bottom: 30px;
-}
+const agentType = document.getElementById("agentType");
+const displayName = document.getElementById("displayName");
+const chemicalName = document.getElementById("chemicalName");
+const occupancy = document.getElementById("occupancy");
+const designConc = document.getElementById("designConc");
+const discharge = document.getElementById("discharge");
+const holdTime = document.getElementById("holdTime");
+const safetyFactor = document.getElementById("safetyFactor");
 
-.page-header h1 {
-  margin-bottom: 10px;
-  font-size: 42px;
-}
+const roomName = document.getElementById("roomName");
+const roomLength = document.getElementById("roomLength");
+const roomWidth = document.getElementById("roomWidth");
+const roomHeight = document.getElementById("roomHeight");
+const nonPermeableVolume = document.getElementById("nonPermeableVolume");
 
-.subtitle {
-  color: #9fb3d1;
-  margin: 0;
-  font-size: 18px;
-}
+const tempMin = document.getElementById("tempMin");
+const tempMax = document.getElementById("tempMax");
+const altitude = document.getElementById("altitude");
+const hazardType = document.getElementById("hazardType");
 
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 25px;
-}
+const pressureClass = document.getElementById("pressureClass");
+const cylinderCapacity = document.getElementById("cylinderCapacity");
+const nozzles = document.getElementById("nozzles");
+const pipe = document.getElementById("pipe");
+const mainPipe = document.getElementById("mainPipe");
+const branchPipe = document.getElementById("branchPipe");
+const fittingsCount = document.getElementById("fittingsCount");
+const reserveRequired = document.getElementById("reserveRequired");
 
-.card {
-  background: #0f1c34;
-  padding: 25px;
-  border-radius: 16px;
-  border: 1px solid #1f355d;
-  box-sizing: border-box;
-}
+const volumeEl = document.getElementById("volume");
+const agentMass = document.getElementById("agentMass");
+const cylinderQty = document.getElementById("cylinderQty");
+const eqPipeLength = document.getElementById("eqPipeLength");
+const nozzlePressure = document.getElementById("nozzlePressure");
+const calcDischargeTime = document.getElementById("calcDischargeTime");
+const hydraulicStatus = document.getElementById("hydraulicStatus");
 
-.card h2 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  font-size: 24px;
-}
+const complianceResult = document.getElementById("complianceResult");
+const engineeringWarning = document.getElementById("engineeringWarning");
+const resultBox = document.getElementById("result");
 
-.card.full {
-  grid-column: 1 / span 2;
-}
+const runButton = document.getElementById("runButton");
+const resetButton = document.getElementById("resetButton");
 
-label {
-  display: block;
-  margin-top: 12px;
-  margin-bottom: 8px;
-  color: #c7d6f1;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-input,
-select,
-textarea {
-  width: 100%;
-  padding: 14px;
-  background: #061022;
-  border: 1px solid #2c4a7c;
-  border-radius: 10px;
-  color: white;
-  box-sizing: border-box;
-  font-size: 15px;
-}
-
-input[readonly] {
-  background: #0b1730;
-  color: #cfe0ff;
-}
-
-textarea {
-  height: 110px;
-  resize: vertical;
-}
-
-.info-box {
-  margin-top: 18px;
-  background: #061022;
-  padding: 14px;
-  border-radius: 10px;
-  border: 1px solid #1e3c68;
-}
-
-.info-box.stacked div {
-  margin-bottom: 8px;
-}
-
-.info-box.stacked div:last-child {
-  margin-bottom: 0;
-}
-
-.actions {
-  margin-top: 30px;
-  display: flex;
-  gap: 15px;
-}
-
-.runButton {
-  padding: 14px 30px;
-  background: #19c37d;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  cursor: pointer;
-  color: white;
-  font-weight: 700;
-}
-
-.runButton:hover {
-  background: #14a96c;
-}
-
-.runButton:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.secondaryButton {
-  padding: 14px 30px;
-  background: transparent;
-  border: 1px solid #2c4a7c;
-  border-radius: 10px;
-  font-size: 16px;
-  cursor: pointer;
-  color: white;
-  font-weight: 700;
-}
-
-.resultCard {
-  margin-top: 35px;
-  background: #0f1c34;
-  padding: 25px;
-  border-radius: 16px;
-  border: 1px solid #1f355d;
-}
-
-pre {
-  background: #061022;
-  padding: 16px;
-  border-radius: 10px;
-  overflow: auto;
-  white-space: pre-wrap;
-  word-break: break-word;
-  min-height: 160px;
-}
-
-@media (max-width: 1200px) {
-  .container {
-    width: 95%;
+function setAgentDefaults() {
+  if (agentType.value === "fm200") {
+    displayName.value = "HFC-227ea";
+    chemicalName.value = "HFC-227ea";
+    designConc.value = "7.9";
+    discharge.value = "10";
+  } else {
+    displayName.value = "FK-5-1-12";
+    chemicalName.value = "FK-5-1-12";
+    designConc.value = "5.3";
+    discharge.value = "10";
   }
 }
 
-@media (max-width: 860px) {
-  .grid {
-    grid-template-columns: 1fr;
+function num(value, fallback = 0) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function calculateVolume() {
+  const l = num(roomLength.value);
+  const w = num(roomWidth.value);
+  const h = num(roomHeight.value);
+  const v = l * w * h;
+  volumeEl.textContent = v.toFixed(2);
+  return v;
+}
+
+function getAgentFactor() {
+  return agentType.value === "fm200" ? 1.15 : 1.0;
+}
+
+function calculateOutputs() {
+  const volume = calculateVolume();
+  const concentration = num(designConc.value);
+  const nozzleCount = num(nozzles.value);
+  const fittings = num(fittingsCount.value);
+  const pressure = num(pressureClass.value);
+  const mainPipeDia = num(mainPipe.value);
+  const branchPipeDia = num(branchPipe.value);
+  const siteAltitude = num(altitude.value);
+
+  const agentFactor = getAgentFactor();
+
+  const estimatedMass = volume > 0 ? volume * (concentration / 100) * 1.2 * agentFactor : 0;
+  const selectedCylinderCapacity = num(cylinderCapacity.value, 45);
+  const estimatedCylinderQty =
+    estimatedMass > 0 && selectedCylinderCapacity > 0
+      ? Math.ceil(estimatedMass / selectedCylinderCapacity)
+      : 0;
+
+  const estimatedEqLength =
+    (mainPipeDia * 0.25) +
+    (branchPipeDia * 0.18) +
+    (fittings * 1.5);
+
+  const estimatedNozzlePressure =
+    pressure - (estimatedEqLength * 0.15) - (siteAltitude * 0.00012);
+
+  const estimatedDischarge = num(discharge.value, 10);
+
+  let status = "PASS";
+  let warning = "None";
+
+  if (volume <= 0) {
+    status = "PENDING INPUT";
+    warning = "Enter valid room dimensions.";
+  } else if (estimatedNozzlePressure < 8) {
+    status = "REVIEW REQUIRED";
+    warning = "Estimated nozzle pressure is low. Check pipe network and cylinder selection.";
   }
 
-  .card.full {
-    grid-column: auto;
-  }
+  agentMass.value = estimatedMass > 0 ? estimatedMass.toFixed(2) : "";
+  cylinderQty.value = estimatedCylinderQty ? String(estimatedCylinderQty) : "";
+  eqPipeLength.value = estimatedEqLength > 0 ? estimatedEqLength.toFixed(2) : "";
+  nozzlePressure.value = estimatedNozzlePressure > 0 ? estimatedNozzlePressure.toFixed(2) : "";
+  calcDischargeTime.value = estimatedDischarge.toFixed(1);
+  hydraulicStatus.value = status;
 
-  .actions {
-    flex-direction: column;
+  complianceResult.textContent = status;
+  engineeringWarning.textContent = warning;
+}
+
+function resetForm() {
+  companyName.value = "FireSys";
+  projectName.value = "Server Room Protection";
+  engineerName.value = "Yahya Hawi";
+  authority.value = "Civil Defense";
+  email.value = "firesys2030@gmail.com";
+  notes.value = "";
+
+  agentType.value = "fm200";
+  occupancy.value = "Normally Occupied";
+
+  roomName.value = "Server Room A";
+  roomLength.value = "8";
+  roomWidth.value = "6";
+  roomHeight.value = "3.2";
+  nonPermeableVolume.value = "2";
+
+  hazardType.value = "Electrical / Electronic Equipment";
+  tempMin.value = "18";
+  tempMax.value = "27";
+  altitude.value = "10";
+  holdTime.value = "10";
+  discharge.value = "10";
+  safetyFactor.value = "20";
+
+  pressureClass.value = "42";
+  cylinderCapacity.value = "45";
+  nozzles.value = "3";
+  pipe.value = "Schedule 40";
+  mainPipe.value = "25";
+  branchPipe.value = "20";
+  fittingsCount.value = "4";
+  reserveRequired.value = "true";
+
+  resultBox.textContent = "No response yet";
+
+  setAgentDefaults();
+  calculateOutputs();
+}
+
+function buildPayload() {
+  return {
+    platform_name: "NFPA 2001 YH Clean Agent Design Platform",
+    standard: "NFPA 2001",
+    edition: "2022 Edition",
+    project: {
+      company_name: companyName.value.trim(),
+      project_name: projectName.value.trim(),
+      engineer: engineerName.value.trim(),
+      authority: authority.value.trim(),
+      email: email.value.trim(),
+      notes: notes.value.trim(),
+      room_name: roomName.value.trim()
+    },
+    system: {
+      system_type: "Clean Agent Total Flooding System",
+      agent_family: agentType.value
+    },
+    hazard: {
+      type: hazardType.value,
+      occupancy: occupancy.value
+    },
+    room: {
+      width_m: num(roomWidth.value),
+      length_m: num(roomLength.value),
+      height_m: num(roomHeight.value),
+      non_permeable_volume_m3: num(nonPermeableVolume.value)
+    },
+    design_basis: {
+      altitude_m: num(altitude.value),
+      min_temp_c: num(tempMin.value),
+      max_temp_c: num(tempMax.value),
+      hold_time_min: num(holdTime.value, 10),
+      discharge_time_sec: num(discharge.value, 10),
+      safety_factor_pct: num(safetyFactor.value, 20)
+    },
+    hardware_inputs: {
+      cylinder_pressure_class_bar: num(pressureClass.value),
+      cylinder_capacity_kg: num(cylinderCapacity.value, 45),
+      pipe_schedule: pipe.value,
+      main_pipe_diameter_mm: num(mainPipe.value),
+      branch_pipe_diameter_mm: num(branchPipe.value),
+      fittings_count: num(fittingsCount.value),
+      nozzle_count: num(nozzles.value),
+      reserve_required: reserveRequired.value === "true"
+    }
+  };
+}
+
+function validatePayload(payload) {
+  const missing = [];
+
+  if (!payload.project.company_name) missing.push("Company Name");
+  if (!payload.project.project_name) missing.push("Project Name");
+  if (!payload.project.engineer) missing.push("Engineer Name");
+  if (!payload.project.authority) missing.push("Authority");
+  if (!payload.project.email) missing.push("Email");
+  if (!payload.project.room_name) missing.push("Room Name");
+
+  if (payload.room.length_m <= 0) missing.push("Room Length");
+  if (payload.room.width_m <= 0) missing.push("Room Width");
+  if (payload.room.height_m <= 0) missing.push("Room Height");
+
+  if (missing.length) {
+    throw new Error("Please complete: " + missing.join(", "));
   }
 }
+
+async function runCalculation() {
+  calculateOutputs();
+
+  const payload = buildPayload();
+
+  try {
+    validatePayload(payload);
+  } catch (err) {
+    resultBox.textContent = err.message;
+    return;
+  }
+
+  runButton.disabled = true;
+  runButton.textContent = "Running...";
+  resultBox.textContent = "Sending request to system...";
+
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const contentType = res.headers.get("content-type") || "";
+    const data = contentType.includes("application/json")
+      ? await res.json()
+      : await res.text();
+
+    resultBox.textContent =
+      typeof data === "string" ? data : JSON.stringify(data, null, 2);
+
+    if (!res.ok) {
+      console.error("Request failed:", data);
+    }
+  } catch (e) {
+    console.error(e);
+    resultBox.textContent =
+      "Failed to fetch.\n\nMost likely reasons:\n" +
+      "1) api/fm200-calc.js file is missing.\n" +
+      "2) GitHub changes are not deployed yet.\n" +
+      "3) Railway webhook is unpublished.\n" +
+      "4) Proxy file is not forwarding correctly.\n\n" +
+      "Technical message: " + e.message;
+  } finally {
+    runButton.disabled = false;
+    runButton.textContent = "Run Calculation";
+  }
+}
+
+agentType.addEventListener("change", () => {
+  setAgentDefaults();
+  calculateOutputs();
+});
+
+[
+  roomLength,
+  roomWidth,
+  roomHeight,
+  nonPermeableVolume,
+  tempMin,
+  tempMax,
+  altitude,
+  pressureClass,
+  cylinderCapacity,
+  nozzles,
+  pipe,
+  mainPipe,
+  branchPipe,
+  fittingsCount,
+  discharge,
+  safetyFactor
+].forEach((el) => {
+  el.addEventListener("input", calculateOutputs);
+  el.addEventListener("change", calculateOutputs);
+});
+
+runButton.addEventListener("click", runCalculation);
+resetButton.addEventListener("click", resetForm);
+
+setAgentDefaults();
+calculateOutputs();
