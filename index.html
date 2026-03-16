@@ -2,11 +2,13 @@
 <html lang="en">
 
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>FM-200 Calculation Platform</title>
 
-<link rel="stylesheet" href="./style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NFPA 2001 YH Clean Agent Design Platform</title>
+
+<link rel="stylesheet" href="./style.css">
 
 </head>
 
@@ -14,13 +16,11 @@
 
 <div class="container">
 
-<div class="header">
+<h1>NFPA 2001 YH Clean Agent Design Platform</h1>
 
-<h1>FM-200 Calculation Platform</h1>
-<p>Railway hosted interface connected to n8n webhook</p>
-
-</div>
-
+<p class="subtitle">
+Clean Agent Fire Suppression System Design – NFPA 2001
+</p>
 
 <div class="grid">
 
@@ -31,7 +31,31 @@
 <input id="projectName" placeholder="Project Name">
 <input id="clientName" placeholder="Client Name">
 <input id="engineerName" placeholder="Engineer Name">
-<input id="email" placeholder="Email">
+<input id="email" placeholder="Engineer Email">
+
+</div>
+
+
+<div class="card">
+
+<h2>Agent Selection</h2>
+
+<label>Agent Type</label>
+
+<select id="agentType">
+
+<option value="fm200">FM-200</option>
+<option value="fk">FK-5-1-12</option>
+
+</select>
+
+<label>Display Name</label>
+
+<input id="displayName" readonly>
+
+<label>Chemical Name</label>
+
+<input id="chemicalName" readonly>
 
 </div>
 
@@ -43,11 +67,15 @@
 <input id="roomName" placeholder="Room Name">
 
 <input id="roomLength" placeholder="Length (m)" type="number">
+
 <input id="roomWidth" placeholder="Width (m)" type="number">
+
 <input id="roomHeight" placeholder="Height (m)" type="number">
 
 <div class="volumeBox">
+
 Room Volume : <span id="volume">0</span> m³
+
 </div>
 
 </div>
@@ -55,31 +83,28 @@ Room Volume : <span id="volume">0</span> m³
 
 <div class="card">
 
-<h2>Design Inputs</h2>
-
-<select id="agentType">
-
-<option value="FM-200">FM-200</option>
-<option value="FK-5-1-12">FK-5-1-12</option>
-
-</select>
+<h2>NFPA 2001 Hazard</h2>
 
 <select id="hazardType">
 
-<option value="electrical">Electrical</option>
-<option value="classA">Class A</option>
-<option value="archive">Archive</option>
+<option>Electrical / Electronic Equipment</option>
+<option>Normally Occupied Enclosure</option>
+<option>Normally Unoccupied Enclosure</option>
+<option>Class A Surface Fire</option>
+<option>Archive / Data / Telecom Room</option>
+<option>Flammable Liquid Hazard</option>
 
 </select>
 
-<input id="designConc" placeholder="Design Concentration %" value="7.9">
+<input id="designConc" value="7.9" placeholder="Design Concentration %">
 
-<input id="tempMin" placeholder="Min Temp °C" value="20">
-<input id="tempMax" placeholder="Max Temp °C" value="30">
+<input id="tempMin" value="20" placeholder="Min Temp °C">
 
-<input id="altitude" placeholder="Altitude (m)" value="0">
+<input id="tempMax" value="30" placeholder="Max Temp °C">
 
-<input id="discharge" placeholder="Discharge Time sec" value="10">
+<input id="altitude" value="0" placeholder="Altitude m">
+
+<input id="discharge" value="10" placeholder="Discharge Time sec">
 
 </div>
 
@@ -88,9 +113,9 @@ Room Volume : <span id="volume">0</span> m³
 
 <h2>Hardware</h2>
 
-<input id="pressure" placeholder="Cylinder Pressure bar" value="42">
+<input id="pressure" value="42" placeholder="Cylinder Pressure bar">
 
-<input id="nozzles" placeholder="Nozzle Count" value="1">
+<input id="nozzles" value="1" placeholder="Nozzle Count">
 
 <select id="pipe">
 
@@ -125,17 +150,15 @@ Run Calculation
 
 <h2>Webhook Response</h2>
 
-<pre id="result">
-
-No response yet
-
-</pre>
+<pre id="result">No response yet</pre>
 
 </div>
 
 </div>
+
 
 <script src="./app.js"></script>
 
 </body>
+
 </html>
