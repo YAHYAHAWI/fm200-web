@@ -1,229 +1,204 @@
-const WEBHOOK = "https://primary-production-2236a.up.railway.app/webhook/fm200-calc";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NFPA 2001 YH Clean Agent Design Platform</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="page-header">
+      <h1>NFPA 2001 YH Clean Agent Design Platform</h1>
+      <p class="subtitle">Clean Agent Fire Suppression Design Interface</p>
+    </header>
 
-const agentType = document.getElementById("agentType");
-const displayName = document.getElementById("displayName");
-const chemicalName = document.getElementById("chemicalName");
-const designConc = document.getElementById("designConc");
-const discharge = document.getElementById("discharge");
+    <div class="grid">
+      <section class="card">
+        <h2>Project Information</h2>
 
-const roomLength = document.getElementById("roomLength");
-const roomWidth = document.getElementById("roomWidth");
-const roomHeight = document.getElementById("roomHeight");
+        <label for="companyName">Company Name</label>
+        <input id="companyName" type="text" placeholder="Company Name" value="FireSys" />
 
-const volumeEl = document.getElementById("volume");
+        <label for="projectName">Project Name</label>
+        <input id="projectName" type="text" placeholder="Project Name" value="Server Room Protection" />
 
-const agentMass = document.getElementById("agentMass");
-const cylinderQty = document.getElementById("cylinderQty");
-const eqPipeLength = document.getElementById("eqPipeLength");
-const nozzlePressure = document.getElementById("nozzlePressure");
-const calcDischargeTime = document.getElementById("calcDischargeTime");
-const hydraulicStatus = document.getElementById("hydraulicStatus");
+        <label for="engineerName">Engineer Name</label>
+        <input id="engineerName" type="text" placeholder="Engineer Name" value="Yahya Hawi" />
 
-const complianceResult = document.getElementById("complianceResult");
-const engineeringWarning = document.getElementById("engineeringWarning");
-const resultBox = document.getElementById("result");
+        <label for="authority">Authority</label>
+        <input id="authority" type="text" placeholder="Authority" value="Civil Defense" />
 
-function updateAgentDefaults() {
-  if (agentType.value === "fm200") {
-    displayName.value = "HFC-227ea";
-    chemicalName.value = "HFC-227ea";
-    designConc.value = "7.9";
-    discharge.value = "10";
-  }
+        <label for="email">Engineer Email</label>
+        <input id="email" type="email" placeholder="Engineer Email" value="firesys2030@gmail.com" />
 
-  if (agentType.value === "fk") {
-    displayName.value = "FK-5-1-12";
-    chemicalName.value = "FK-5-1-12";
-    designConc.value = "5.3";
-    discharge.value = "10";
-  }
+        <label for="notes">Engineering Notes</label>
+        <textarea id="notes" placeholder="Optional notes"></textarea>
+      </section>
 
-  calculateOutputs();
-}
+      <section class="card">
+        <h2>Agent Selection</h2>
 
-function calculateVolume() {
-  const l = Number(roomLength.value || 0);
-  const w = Number(roomWidth.value || 0);
-  const h = Number(roomHeight.value || 0);
+        <label for="agentType">Agent Family</label>
+        <select id="agentType">
+          <option value="fm200">FM-200</option>
+          <option value="fk5112">FK-5-1-12</option>
+        </select>
 
-  const v = l * w * h;
-  volumeEl.innerText = v.toFixed(2);
-  return v;
-}
+        <label for="displayName">Display Name</label>
+        <input id="displayName" type="text" readonly />
 
-function getAgentFactor() {
-  if (agentType.value === "fm200") return 1.15;
-  if (agentType.value === "fk") return 1.0;
-  return 1.0;
-}
+        <label for="chemicalName">Chemical Name</label>
+        <input id="chemicalName" type="text" readonly />
 
-function calculateOutputs() {
-  const volume = calculateVolume();
-  const concentration = Number(designConc.value || 0);
-  const nozzleCount = Number(document.getElementById("nozzles").value || 0);
-  const fittings = Number(document.getElementById("fittingsCount").value || 0);
-  const pressureClass = Number(document.getElementById("pressureClass").value || 0);
-  const mainPipe = Number(document.getElementById("mainPipe").value || 0);
-  const branchPipe = Number(document.getElementById("branchPipe").value || 0);
-  const altitude = Number(document.getElementById("altitude").value || 0);
+        <label for="systemType">System Type</label>
+        <input id="systemType" type="text" value="Clean Agent Total Flooding System" readonly />
 
-  const agentFactor = getAgentFactor();
+        <label for="occupancy">Occupancy</label>
+        <select id="occupancy">
+          <option value="Normally Occupied">Normally Occupied</option>
+          <option value="Normally Unoccupied">Normally Unoccupied</option>
+        </select>
+      </section>
 
-  // Simplified conceptual estimate only
-  const estimatedMass = volume * (concentration / 100) * 1.2 * agentFactor;
-  const estimatedCylinderCapacity = pressureClass === 42 ? 50 : 35;
-  const estimatedCylinderQty = estimatedMass > 0 ? Math.ceil(estimatedMass / estimatedCylinderCapacity) : 0;
+      <section class="card">
+        <h2>Room Data</h2>
 
-  const estimatedEqLength = (mainPipe * 0.25) + (branchPipe * 0.18) + (fittings * 1.5);
-  const estimatedNozzlePressure =
-    pressureClass - (estimatedEqLength * 0.15) - (altitude * 0.00012);
+        <label for="roomName">Protected Room Name</label>
+        <input id="roomName" type="text" placeholder="Room Name" value="Server Room A" />
 
-  const estimatedDischarge = 10.0;
+        <label for="roomLength">Room Length (m)</label>
+        <input id="roomLength" type="number" step="0.01" placeholder="Length in meters" value="8" />
 
-  let status = "PASS";
-  let warning = "None";
+        <label for="roomWidth">Room Width (m)</label>
+        <input id="roomWidth" type="number" step="0.01" placeholder="Width in meters" value="6" />
 
-  if (estimatedNozzlePressure < 8) {
-    status = "REVIEW REQUIRED";
-    warning = "Estimated nozzle pressure is low. Check pipe network and cylinder selection.";
-  }
+        <label for="roomHeight">Room Height (m)</label>
+        <input id="roomHeight" type="number" step="0.01" placeholder="Height in meters" value="3.2" />
 
-  if (estimatedMass <= 0 || volume <= 0) {
-    status = "PENDING INPUT";
-    warning = "Enter valid room dimensions to calculate system outputs.";
-  }
+        <label for="nonPermeableVolume">Non-Permeable Volume (m³)</label>
+        <input id="nonPermeableVolume" type="number" step="0.01" value="2" />
 
-  agentMass.value = estimatedMass > 0 ? estimatedMass.toFixed(2) : "";
-  cylinderQty.value = estimatedCylinderQty ? String(estimatedCylinderQty) : "";
-  eqPipeLength.value = estimatedEqLength > 0 ? estimatedEqLength.toFixed(2) : "";
-  nozzlePressure.value = estimatedNozzlePressure > 0 ? estimatedNozzlePressure.toFixed(2) : "";
-  calcDischargeTime.value = estimatedDischarge.toFixed(1);
-  hydraulicStatus.value = status;
+        <div class="info-box">
+          <strong>Calculated Gross Volume:</strong>
+          <span id="volume">0.00</span> m³
+        </div>
+      </section>
 
-  complianceResult.innerText = status;
-  engineeringWarning.innerText = warning;
-}
+      <section class="card">
+        <h2>NFPA 2001 Design Basis</h2>
 
-function resetForm() {
-  document.getElementById("projectName").value = "";
-  document.getElementById("clientName").value = "";
-  document.getElementById("engineerName").value = "";
-  document.getElementById("email").value = "";
-  document.getElementById("roomName").value = "";
-  roomLength.value = "";
-  roomWidth.value = "";
-  roomHeight.value = "";
-  document.getElementById("hazardType").selectedIndex = 0;
-  document.getElementById("tempMin").value = "20";
-  document.getElementById("tempMax").value = "30";
-  document.getElementById("altitude").value = "0";
-  document.getElementById("pressureClass").value = "42";
-  document.getElementById("nozzles").value = "1";
-  document.getElementById("pipe").selectedIndex = 0;
-  document.getElementById("mainPipe").value = "25";
-  document.getElementById("branchPipe").value = "20";
-  document.getElementById("fittingsCount").value = "4";
-  document.getElementById("notes").value = "";
-  resultBox.innerText = "No response yet";
+        <label for="hazardType">Hazard Type</label>
+        <select id="hazardType">
+          <option value="Electrical / Electronic Equipment">Electrical / Electronic Equipment</option>
+          <option value="Class A Surface Fire">Class A Surface Fire</option>
+          <option value="Archive / Data / Telecom Room">Archive / Data / Telecom Room</option>
+          <option value="Flammable Liquid Hazard">Flammable Liquid Hazard</option>
+        </select>
 
-  updateAgentDefaults();
-  calculateOutputs();
-}
+        <label for="designConc">Design Concentration (%)</label>
+        <input id="designConc" type="number" readonly />
 
-async function runCalculation() {
-  calculateOutputs();
+        <label for="tempMin">Minimum Ambient Temperature (°C)</label>
+        <input id="tempMin" type="number" step="0.1" value="18" />
 
-  const payload = {
-    platform_name: "NFPA 2001 YH Clean Agent Design Platform",
-    standard: "NFPA 2001",
-    system: {
-      system_type: document.getElementById("systemType").value,
-      agent_family: agentType.value,
-      display_name: displayName.value,
-      chemical_name: chemicalName.value
-    },
-    project: {
-      name: document.getElementById("projectName").value,
-      client: document.getElementById("clientName").value,
-      engineer: document.getElementById("engineerName").value,
-      email: document.getElementById("email").value,
-      notes: document.getElementById("notes").value
-    },
-    hazard: {
-      type: document.getElementById("hazardType").value
-    },
-    room: {
-      name: document.getElementById("roomName").value,
-      length_m: Number(roomLength.value || 0),
-      width_m: Number(roomWidth.value || 0),
-      height_m: Number(roomHeight.value || 0),
-      volume_m3: Number(volumeEl.innerText || 0)
-    },
-    design_basis: {
-      concentration_percent: Number(designConc.value || 0),
-      min_temp_c: Number(document.getElementById("tempMin").value || 0),
-      max_temp_c: Number(document.getElementById("tempMax").value || 0),
-      altitude_m: Number(document.getElementById("altitude").value || 0),
-      discharge_time_sec: Number(discharge.value || 0)
-    },
-    hardware_inputs: {
-      cylinder_pressure_class_bar: Number(document.getElementById("pressureClass").value || 0),
-      nozzle_count: Number(document.getElementById("nozzles").value || 0),
-      pipe_schedule: document.getElementById("pipe").value,
-      main_pipe_diameter_mm: Number(document.getElementById("mainPipe").value || 0),
-      branch_pipe_diameter_mm: Number(document.getElementById("branchPipe").value || 0),
-      fittings_count: Number(document.getElementById("fittingsCount").value || 0)
-    },
-    hydraulic_results: {
-      calculated_agent_mass_kg: Number(agentMass.value || 0),
-      estimated_cylinder_quantity: Number(cylinderQty.value || 0),
-      estimated_total_equivalent_pipe_length_m: Number(eqPipeLength.value || 0),
-      estimated_nozzle_pressure_bar: Number(nozzlePressure.value || 0),
-      estimated_discharge_time_sec: Number(calcDischargeTime.value || 0),
-      hydraulic_status: hydraulicStatus.value
-    },
-    compliance: {
-      result: complianceResult.innerText,
-      warning: engineeringWarning.innerText
-    }
-  };
+        <label for="tempMax">Maximum Ambient Temperature (°C)</label>
+        <input id="tempMax" type="number" step="0.1" value="27" />
 
-  resultBox.innerText = "Sending...";
+        <label for="altitude">Site Altitude Above Sea Level (m)</label>
+        <input id="altitude" type="number" step="0.1" value="10" />
 
-  try {
-    const res = await fetch(WEBHOOK, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    });
+        <label for="holdTime">Required Hold Time (min)</label>
+        <input id="holdTime" type="number" step="0.1" value="10" />
 
-    const contentType = res.headers.get("content-type") || "";
-    const data = contentType.includes("application/json")
-      ? await res.json()
-      : await res.text();
+        <label for="discharge">Required Discharge Time (sec)</label>
+        <input id="discharge" type="number" step="0.1" value="10" />
 
-    resultBox.innerText =
-      typeof data === "string" ? data : JSON.stringify(data, null, 2);
-  } catch (e) {
-    resultBox.innerText = "Error: " + e.message;
-  }
-}
+        <label for="safetyFactor">Safety Factor (%)</label>
+        <input id="safetyFactor" type="number" step="0.1" value="20" />
+      </section>
 
-agentType.addEventListener("change", updateAgentDefaults);
-roomLength.addEventListener("input", calculateOutputs);
-roomWidth.addEventListener("input", calculateOutputs);
-roomHeight.addEventListener("input", calculateOutputs);
-document.getElementById("tempMin").addEventListener("input", calculateOutputs);
-document.getElementById("tempMax").addEventListener("input", calculateOutputs);
-document.getElementById("altitude").addEventListener("input", calculateOutputs);
-document.getElementById("pressureClass").addEventListener("change", calculateOutputs);
-document.getElementById("nozzles").addEventListener("input", calculateOutputs);
-document.getElementById("pipe").addEventListener("change", calculateOutputs);
-document.getElementById("mainPipe").addEventListener("input", calculateOutputs);
-document.getElementById("branchPipe").addEventListener("input", calculateOutputs);
-document.getElementById("fittingsCount").addEventListener("input", calculateOutputs);
+      <section class="card">
+        <h2>System Hardware Inputs</h2>
 
-updateAgentDefaults();
-calculateOutputs();
+        <label for="pressureClass">Cylinder Pressure Class (bar)</label>
+        <select id="pressureClass">
+          <option value="25">25 bar</option>
+          <option value="42" selected>42 bar</option>
+        </select>
+
+        <label for="cylinderCapacity">Cylinder Capacity (kg)</label>
+        <input id="cylinderCapacity" type="number" step="0.1" value="45" />
+
+        <label for="nozzles">Nozzle Count</label>
+        <input id="nozzles" type="number" step="1" value="3" />
+
+        <label for="pipe">Pipe Schedule</label>
+        <select id="pipe">
+          <option value="Schedule 40" selected>Schedule 40</option>
+          <option value="Schedule 80">Schedule 80</option>
+          <option value="Stainless Steel">Stainless Steel</option>
+        </select>
+
+        <label for="mainPipe">Main Pipe Diameter (mm)</label>
+        <input id="mainPipe" type="number" step="0.1" value="25" />
+
+        <label for="branchPipe">Branch Pipe Diameter (mm)</label>
+        <input id="branchPipe" type="number" step="0.1" value="20" />
+
+        <label for="fittingsCount">Fittings Count</label>
+        <input id="fittingsCount" type="number" step="1" value="4" />
+
+        <label for="reserveRequired">Reserve Required</label>
+        <select id="reserveRequired">
+          <option value="true" selected>Yes</option>
+          <option value="false">No</option>
+        </select>
+      </section>
+
+      <section class="card">
+        <h2>Hydraulic Preview</h2>
+
+        <label>Estimated Agent Mass (kg)</label>
+        <input id="agentMass" type="text" readonly />
+
+        <label>Estimated Cylinder Quantity</label>
+        <input id="cylinderQty" type="text" readonly />
+
+        <label>Estimated Equivalent Pipe Length (m)</label>
+        <input id="eqPipeLength" type="text" readonly />
+
+        <label>Estimated Nozzle Pressure (bar)</label>
+        <input id="nozzlePressure" type="text" readonly />
+
+        <label>Estimated Discharge Time (sec)</label>
+        <input id="calcDischargeTime" type="text" readonly />
+
+        <label>Hydraulic Status</label>
+        <input id="hydraulicStatus" type="text" readonly />
+      </section>
+
+      <section class="card full">
+        <h2>Compliance / Engineering Output</h2>
+        <div class="info-box stacked">
+          <div><strong>Standard:</strong> NFPA 2001</div>
+          <div><strong>Compliance Check:</strong> <span id="complianceResult">Pending</span></div>
+          <div><strong>Engineering Warning:</strong> <span id="engineeringWarning">None</span></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="actions">
+      <button class="runButton" id="runButton">Run Calculation</button>
+      <button class="secondaryButton" id="resetButton" type="button">Reset Form</button>
+    </div>
+
+    <section class="resultCard">
+      <h2>Webhook Response</h2>
+      <pre id="result">No response yet</pre>
+    </section>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
