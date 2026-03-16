@@ -1,78 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FM-200 Calculator</title>
-    <link rel="stylesheet" href="./style.css" />
-  </head>
-  <body>
-    <div class="container">
-      <div class="card">
-        <h1>FM-200 Calculator</h1>
-        <p class="subtitle">
-          Connected to Railway n8n webhook
-        </p>
 
-        <div class="grid">
-          <div class="field">
-            <label>Project Name</label>
-            <input id="projectName" type="text" placeholder="Project Name" />
-          </div>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FM-200 Calculation Platform</title>
 
-          <div class="field">
-            <label>Client Name</label>
-            <input id="clientName" type="text" placeholder="Client Name" />
-          </div>
+<link rel="stylesheet" href="./style.css" />
 
-          <div class="field">
-            <label>Engineer Name</label>
-            <input id="engineerName" type="text" placeholder="Engineer Name" />
-          </div>
+</head>
 
-          <div class="field">
-            <label>Email</label>
-            <input id="email" type="email" placeholder="Email" />
-          </div>
+<body>
 
-          <div class="field">
-            <label>Room Length (m)</label>
-            <input id="roomLength" type="number" placeholder="Length" />
-          </div>
+<div class="container">
 
-          <div class="field">
-            <label>Room Width (m)</label>
-            <input id="roomWidth" type="number" placeholder="Width" />
-          </div>
+<div class="header">
 
-          <div class="field">
-            <label>Room Height (m)</label>
-            <input id="roomHeight" type="number" placeholder="Height" />
-          </div>
+<h1>FM-200 Calculation Platform</h1>
+<p>Railway hosted interface connected to n8n webhook</p>
 
-          <div class="field">
-            <label>Agent Type</label>
-            <select id="agentType">
-              <option value="FM-200">FM-200</option>
-              <option value="FK-5-1-12">FK-5-1-12</option>
-            </select>
-          </div>
-        </div>
+</div>
 
-        <div class="summary">
-          <strong>Room Volume:</strong>
-          <span id="volumeValue">0</span> m³
-        </div>
 
-        <div class="actions">
-          <button id="runBtn">Run Calculation</button>
-        </div>
+<div class="grid">
 
-        <h3>Webhook Response</h3>
-        <pre id="resultBox">No response yet.</pre>
-      </div>
-    </div>
+<div class="card">
 
-    <script src="./app.js"></script>
-  </body>
+<h2>Project Information</h2>
+
+<input id="projectName" placeholder="Project Name">
+<input id="clientName" placeholder="Client Name">
+<input id="engineerName" placeholder="Engineer Name">
+<input id="email" placeholder="Email">
+
+</div>
+
+
+<div class="card">
+
+<h2>Room Data</h2>
+
+<input id="roomName" placeholder="Room Name">
+
+<input id="roomLength" placeholder="Length (m)" type="number">
+<input id="roomWidth" placeholder="Width (m)" type="number">
+<input id="roomHeight" placeholder="Height (m)" type="number">
+
+<div class="volumeBox">
+Room Volume : <span id="volume">0</span> m³
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h2>Design Inputs</h2>
+
+<select id="agentType">
+
+<option value="FM-200">FM-200</option>
+<option value="FK-5-1-12">FK-5-1-12</option>
+
+</select>
+
+<select id="hazardType">
+
+<option value="electrical">Electrical</option>
+<option value="classA">Class A</option>
+<option value="archive">Archive</option>
+
+</select>
+
+<input id="designConc" placeholder="Design Concentration %" value="7.9">
+
+<input id="tempMin" placeholder="Min Temp °C" value="20">
+<input id="tempMax" placeholder="Max Temp °C" value="30">
+
+<input id="altitude" placeholder="Altitude (m)" value="0">
+
+<input id="discharge" placeholder="Discharge Time sec" value="10">
+
+</div>
+
+
+<div class="card">
+
+<h2>Hardware</h2>
+
+<input id="pressure" placeholder="Cylinder Pressure bar" value="42">
+
+<input id="nozzles" placeholder="Nozzle Count" value="1">
+
+<select id="pipe">
+
+<option>Schedule 40</option>
+<option>Schedule 80</option>
+<option>Stainless Steel</option>
+
+</select>
+
+</div>
+
+
+<div class="card full">
+
+<h2>Engineering Notes</h2>
+
+<textarea id="notes"></textarea>
+
+</div>
+
+</div>
+
+
+<button class="runButton" onclick="runCalculation()">
+
+Run Calculation
+
+</button>
+
+
+<div class="resultCard">
+
+<h2>Webhook Response</h2>
+
+<pre id="result">
+
+No response yet
+
+</pre>
+
+</div>
+
+</div>
+
+<script src="./app.js"></script>
+
+</body>
 </html>
